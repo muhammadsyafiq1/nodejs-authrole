@@ -50,7 +50,6 @@ export const updateUser = async (req, res) => {
     const user = await User.findOne({where:{
         uuid: req.params.id
     }});
-    console.log(user);
     if(!user) return res.status(404).json({msg: "User not found"});
 
     const {name, email, password, confirmPassword, role} = req.body;

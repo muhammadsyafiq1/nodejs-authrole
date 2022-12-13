@@ -64,7 +64,24 @@ export const createProduct = async (req, res) => {
 }
 
 export const updateProduct = async (req, res) => {
-    
+    const product = await Product.findOne({where:{
+        uuid: req.params.id
+    }});
+    if(!product) res.status(404).json({msg: "Product tidak ada"});
+
+    const {name, price} = req.body;
+    if(req.userId !== product.userId) return res.status(403).json({msg: "Akses terbatas"});
+    try {
+        await Product.update({name, price},{
+            where:{
+                userId  :req.userId
+            }
+        });
+        res.status(200).json({msg: "product berhasil diupdate"});
+    } catch (error) {
+        res.status(400).json({msg: error.message});
+    }
+
 }
 
 export const deleteProduct = async  (req, res) => {
@@ -73,7 +90,6 @@ export const deleteProduct = async  (req, res) => {
             uuid: req.params.id
         }
     });
-    console.log(product);
     if(!product) return res.status(404).json({msg: "Product tidak ada"});
 
     try {
