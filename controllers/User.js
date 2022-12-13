@@ -13,6 +13,7 @@ export const getUsers = async (req, res) => {
 }
 
 export const getUserById = async (req, res) => {
+    // console.log(req.params.id);
     try {
         const response = await User.findOne({
             attributes: ['uuid','name','email','role'],
