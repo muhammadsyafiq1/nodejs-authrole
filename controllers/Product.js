@@ -6,9 +6,9 @@ export const getProducts = async (req, res) => {
         let response;
         if(req.role === "admin"){
             response = await Product.findAll({
-                attributes:[
-                    'name', 'price'
-                ],
+                // attributes:[
+                //     'name', 'price'
+                // ],
                 //ambil relasi dengan user
                 include:[{
                     model: User,
@@ -74,7 +74,7 @@ export const updateProduct = async (req, res) => {
     try {
         await Product.update({name, price},{
             where:{
-                userId  :req.userId
+                uuid  :req.params.id
             }
         });
         res.status(200).json({msg: "product berhasil diupdate"});
