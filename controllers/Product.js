@@ -62,7 +62,7 @@ export const createProduct = async (req, res) => {
         res.status(500).json({msg: error.message});
     }
 }
-
+ 
 export const updateProduct = async (req, res) => {
     const product = await Product.findOne({where:{
         uuid: req.params.id

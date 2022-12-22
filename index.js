@@ -5,9 +5,11 @@ import dotenv from "dotenv"
 import User from "./routes/User.js"
 import Product from "./routes/Product.js"
 import Auth from "./routes/Auth.js"
+import Paginate from "./routes/Paginate.js"
+
 dotenv.config();
 // 1 menyimpan session kedalam db
-import SequelizeStore  from "connect-session-sequelize"
+// import SequelizeStore  from "connect-session-sequelize"
 
 //import koneksi agar bisa sync ke model untuk generate tabel secara otomatis / migrate
 import db from "./config/Database.js" 
@@ -15,15 +17,16 @@ import db from "./config/Database.js"
 const app = express();
 
 //2 menyimpan session ke db
-const sessionStore = SequelizeStore(session.Store);
-const store = new sessionStore({
-    db: db
-})
+// const sessionStore = SequelizeStore(session.Store);
+// const store = new sessionStore({
+//     db: db
+// })
 
 //singkrongkan koneksi db // migrate
-// (async() => {
+// (async()=>{
 //     await db.sync();
-// })()
+// })();
+
 
 app.use(session({
     secret: process.env.SESS_SECRET,
@@ -33,7 +36,7 @@ app.use(session({
         secure: 'auto'
     },
     // 3 menyimpan session ke db
-    store: store
+    // store: store
 }))
 
 app.use(cors({
@@ -50,6 +53,7 @@ app.use(express.json());
 app.use(User)
 app.use(Product)
 app.use(Auth)
+app.use(Paginate)
 
 // 4 membuat tabel session 
 // store.sync();

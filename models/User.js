@@ -44,7 +44,31 @@ const User = db.define('users', {
         }
     }
 }, {
-    freezeTableName: true
+    freezeTableName: true,
+    // timestamps: true
 });
+
+//jika sinkron hanya 1 tabel
+// User.sync().then((data)=>{
+//     console.log("Table and model synced successfully!");
+// }).catch((err)=>{
+//     console.log("Error syncing the table and model!");
+// });
+
+//.sync({force: true})
+//create tabel dan drop tabel jika ada tabel yg sama
+
+//.sync({alter: true})
+
+//add user 
+// User.sync({alter:true}).then(()=>{
+    //working with our update table
+//     const user = User.build({username: 'syafiq', password: '1234'});
+//     return user.save();
+// }).then((data) => {
+//     console.log("user addes to db");
+// }).catch((err)=> {
+//     console.log(err);
+// });
 
 export default User;

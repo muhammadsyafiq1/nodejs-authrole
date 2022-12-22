@@ -8,6 +8,7 @@ export const Login = async(req, res) => {
             email: req.body.email
         }
     });
+
     if(!user) return res.status(404).json({msg: "User tidak ditemukan."});
 
     const match = await argon2.verify(user.password, req.body.password);
