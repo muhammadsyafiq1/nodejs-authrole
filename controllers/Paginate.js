@@ -9,6 +9,7 @@ export const listPaginate = async (req, res) => {
     const totalRows = await Paginate.count({
         where: {
             // [Op.or] : [{name}, {email}]
+            // penggunaan or untuk sleect semua hasil dari filter 
             [Op.or] : [{name: {
                 [Op.like] : '%'+search+'%'
             }}, {email : {
