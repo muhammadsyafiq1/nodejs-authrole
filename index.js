@@ -6,6 +6,7 @@ import User from "./routes/User.js"
 import Product from "./routes/Product.js"
 import Auth from "./routes/Auth.js"
 import Paginate from "./routes/Paginate.js"
+import FileUpload from "express-fileupload"
 
 dotenv.config();
 // 1 menyimpan session kedalam db
@@ -24,7 +25,7 @@ const app = express();
 
 //singkrongkan koneksi db // migrate
 // (async()=>{
-//     await db.sync();
+//     await db.sync({alter: true});
 // })();
 
 
@@ -38,14 +39,13 @@ app.use(session({
     // 3 menyimpan session ke db
     // store: store
 }))
-
+app.use(FileUpload())
 app.use(cors({
     // forntend dapat mengirimkan request beserta credentials
     credentials: true,
     // domain yang diizinkan untuk akses api
     origin: 'http://localhost:3000'
 }))
-
 // agar  bisa menerima data dalam bentuk JSON
 app.use(express.json());
 

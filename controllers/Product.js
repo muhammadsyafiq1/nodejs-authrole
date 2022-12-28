@@ -1,3 +1,4 @@
+import path from "path";
 import Product from "../models/Product.js"
 import User from "../models/User.js";
 
@@ -50,17 +51,29 @@ export const getProductById = async (req, res) => {
 }
 
 export const createProduct = async (req, res) => {
-    const {name, price} = req.body;
-    try {
-        await Product.create({
-            name: name,
-            price: price,
-            userId: req.userId
-        });
-        res.status(201).json({msg: "Product create"});
-    } catch (error) {
-        res.status(500).json({msg: error.message});
-    }
+    if(req.files === null) return res.status(400).json({msg: "No File Uploaded"});
+    const name = req.body.name
+    const file = req.files.file
+    const price = req.body.price
+    const userId = req.userId
+    const fileSize = file.data.length
+    const ext = path.extname(file.name)
+    const fileName = file.md5 + ext
+    const url = `${req.protocol}://${req.get("host")}/images/${fileName}`
+    const allowedType = ['.png','.jpg','.jpeg']
+ 
+    if(!allowedType.includes(ext.toLowerCase())) return res.status(422).json({msg: "Invalid Images"});
+    if(fileSize > 5000000) return res.status(422).json({msg: "Image must be less than 5 MB"});
+ 
+    file.mv(`./public/images/${fileName}`, async(err)=>{
+        if(err) return res.status(500).json({msg: err.message});
+        try {
+            await Product.create({name: name, image: fileName, url: url, price: price, userId: userId});
+            res.status(201).json({msg: "Product Created Successfuly"});
+        } catch (error) {
+            console.log(error.message);
+        }
+    })
 }
  
 export const updateProduct = async (req, res) => {

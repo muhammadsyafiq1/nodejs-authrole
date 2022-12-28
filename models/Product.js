@@ -34,6 +34,12 @@ const Product = db.define('products', {
         validate: {
             notEmpty: true
         }
+    },
+    Image:{
+        type: DataTypes.STRING
+    },
+    url:{
+        type:DataTypes.STRING
     }
 }, {
     freezeTableName: true
