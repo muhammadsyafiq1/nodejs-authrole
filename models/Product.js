@@ -35,7 +35,7 @@ const Product = db.define('products', {
             notEmpty: true
         }
     },
-    Image:{
+    image:{
         type: DataTypes.STRING
     },
     url:{

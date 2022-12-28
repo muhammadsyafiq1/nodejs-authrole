@@ -1,3 +1,5 @@
+
+import fs from "fs";
 import path from "path";
 import Product from "../models/Product.js"
 import User from "../models/User.js";
@@ -74,45 +76,73 @@ export const createProduct = async (req, res) => {
             console.log(error.message);
         }
     })
+    
 }
  
 export const updateProduct = async (req, res) => {
-    const product = await Product.findOne({where:{
-        uuid: req.params.id
-    }});
-    if(!product) res.status(404).json({msg: "Product tidak ada"});
-
-    const {name, price} = req.body;
-    if(req.userId !== product.userId) return res.status(403).json({msg: "Akses terbatas"});
+    const product = await Product.findOne({
+        where:{
+            id : req.params.id
+        }
+    });
+    console.log(product.image);
+    console.log(product);
+    if(!product) return res.status(404).json({msg: "No Data Found"});
+     
+    let fileName = "";
+    if(req.files === null){
+        fileName = product.image;
+    }else{
+        const file = req.files.file;
+        const fileSize = file.data.length;
+        const ext = path.extname(file.name);
+        fileName = file.md5 + ext;
+        const allowedType = ['.png','.jpg','.jpeg'];
+ 
+        if(!allowedType.includes(ext.toLowerCase())) return res.status(422).json({msg: "Invalid Images"});
+        if(fileSize > 5000000) return res.status(422).json({msg: "Image must be less than 5 MB"});
+ 
+        const filepath = `./public/images/${product.image}`;
+        fs.unlinkSync(filepath);
+ 
+        file.mv(`./public/images/${fileName}`, (err)=>{
+            if(err) return res.status(500).json({msg: err.message});
+        });
+    }
+    const name = req.body.name;
+    const price = req.body.price;
+    const url = `${req.protocol}://${req.get("host")}/images/${fileName}`;
+     
     try {
-        await Product.update({name, price},{
+        await Product.update({name: name, image: fileName, url: url, price:price},{
             where:{
-                uuid  :req.params.id
+                id: req.params.id
             }
         });
-        res.status(200).json({msg: "product berhasil diupdate"});
+        res.status(200).json({msg: "Product Updated Successfuly"});
     } catch (error) {
-        res.status(400).json({msg: error.message});
+        console.log(error.message);
     }
-
 }
 
 export const deleteProduct = async  (req, res) => {
     const product = await Product.findOne({
-        where: {
-            uuid: req.params.id
+        where:{
+            id : req.params.id
         }
     });
-    if(!product) return res.status(404).json({msg: "Product tidak ada"});
-
+    if(!product) return res.status(404).json({msg: "No Data Found"});
+ 
     try {
+        const filepath = `./public/images/${product.image}`;
+        fs.unlinkSync(filepath);
         await Product.destroy({
             where:{
-                uuid: product.uuid
+                id : req.params.id
             }
         });
-        res.status(200).json({msg: "Product deleted"});
+        res.status(200).json({msg: "Product Deleted Successfuly"});
     } catch (error) {
-        res.status(400).json({msg: error.message});
+        console.log(error.message);
     }
 }
